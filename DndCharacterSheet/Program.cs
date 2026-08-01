@@ -8,7 +8,7 @@ class Program
 
         hero.SetStats(20,10,16,5,5,8);
         
-        Console.WriteLine($"Персонаж: {hero.Name} ({hero.GetCharacterRaceInRussian()} {hero.GetCharacterClassInRussian()})");
+        Console.WriteLine($"Персонаж: {hero.Name} ({hero.CharacterRace.ToRussian()} {hero.CharacterClass.ToRussian()})");
         Console.WriteLine($"Здоровье: {hero.CurrentHealth}/{hero.MaxHealth}");
         Console.WriteLine($"\nМодификатор Силы (20): +{hero.CalculateModifier(hero.Strength)} ");
         Console.WriteLine($"Модификатор Ловкости (10): {hero.CalculateModifier(hero.Dexterity)} ");
