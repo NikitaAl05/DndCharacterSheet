@@ -57,13 +57,19 @@ internal static class EnumExtensions
     {
         return damageType switch
         {
-            DamageType.Slashing => "Рубящий",
-            DamageType.Piercing => "Колющий",
+            DamageType.Acid => "Кислота",
             DamageType.Bludgeoning => "Дробящий",
-            DamageType.Fire => "Огонь",
             DamageType.Cold => "Холод",
+            DamageType.Fire => "Огонь",
+            DamageType.Force => "Силовой",
             DamageType.Lightning => "Электрический",
+            DamageType.Necrotic => "Некротический",
+            DamageType.Piercing => "Колющий",
             DamageType.Poison => "Яд",
+            DamageType.Psychic => "Психический",
+            DamageType.Radiant => "Лучистый",
+            DamageType.Slashing => "Рубящий",
+            DamageType.Thunder => "Звуковой",
             _ => "Урон"
         };
     }

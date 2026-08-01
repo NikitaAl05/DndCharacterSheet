@@ -3,14 +3,17 @@ namespace DndCharacterSheet;
 internal class Inventory
 {
     private readonly List<Item> items = new();
-    public event Action<Item> OnItemAddFailed;
     
-    public double MaxWeight {get; init; }
+    internal event Action<Item> OnItemAddFailed;
+    internal double MaxWeight { get; init; }
 
+    internal Item this[int index]
+    {
+        get => this.items[index];
+    }
     internal Inventory(double maxWeight)
     {
         this.MaxWeight = maxWeight;
-        
     }
     
     private double GetItemWeight(Item item)
@@ -18,15 +21,15 @@ internal class Inventory
         return item is IHasQuantity itemWithQty ? item.Weight * itemWithQty.Quantity : item.Weight;
     }
     
-    public void AddItem(Item item)
+    internal void AddItem(Item item)
     {
-        if (this.GetTotalWeight() + GetItemWeight(item) <= this.MaxWeight)
+        if (this.GetTotalWeight() + this.GetItemWeight(item) <= this.MaxWeight)
         {
             this.items.Add(item);
         }
         else
         {
-            OnItemAddFailed?.Invoke(item);
+            this.OnItemAddFailed?.Invoke(item);
         }
     }
 
@@ -34,5 +37,4 @@ internal class Inventory
     {
         return this.items.Sum(i => this.GetItemWeight(i));
     }
-    
 }

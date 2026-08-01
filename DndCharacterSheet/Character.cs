@@ -112,4 +112,11 @@ internal sealed class Character
         };
     }
 
+    internal int RollAbilityCheck(DiceType diceType, DiceRoller roller, int statValue)
+    {
+        int modifier = this.CalculateModifier(statValue);
+        
+        return roller.Roll(diceType, modifier);
+    }
+
 }
