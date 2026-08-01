@@ -40,18 +40,20 @@ internal sealed class Character
     public string Name { get; private set; }
     public CharacterRace CharacterRace { get; private set; }
     public CharacterClass CharacterClass { get; private set; }
-    
+
     public int CurrentHealth { get; private set; }
     public int MaxHealth { get; private set; }
-    
+
     public int Strength { get; private set; }
     public int Dexterity { get; private set; }
     public int Constitution { get; private set; }
     public int Intelligence { get; private set; }
     public int Wisdom { get; private set; }
     public int Charisma { get; private set; }
-    
-    internal Character() { }
+
+    internal Character()
+    {
+    }
 
     internal Character(string name, CharacterRace characterRace, CharacterClass characterClass)
     {
@@ -74,7 +76,7 @@ internal sealed class Character
         this.Wisdom = wisdom;
         this.Charisma = charisma;
 
-        this.MaxHealth = 10 + this.CalculateModifier(this.Constitution);
+        this.MaxHealth = GetBaseHealth() + this.CalculateModifier(this.Constitution);
         this.CurrentHealth = this.MaxHealth;
     }
 
@@ -95,4 +97,19 @@ internal sealed class Character
             this.CurrentHealth = this.MaxHealth;
         }
     }
+
+    private int GetBaseHealth()
+    {
+        return this.CharacterClass switch
+        {
+            CharacterClass.Barbarian => 12,
+            CharacterClass.Fighter or CharacterClass.Paladin or CharacterClass.Ranger => 10,
+            CharacterClass.Bard or CharacterClass.Cleric or CharacterClass.Druid or 
+            CharacterClass.Monk or CharacterClass.Rogue or CharacterClass.Warlock or
+            CharacterClass.Artificer => 8,     
+            CharacterClass.Wizard or CharacterClass.Sorcerer => 6,
+            _ => 8
+        };
+    }
+
 }
