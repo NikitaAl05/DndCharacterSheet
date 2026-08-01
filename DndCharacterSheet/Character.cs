@@ -53,6 +53,8 @@ internal sealed class Character
     
     internal Inventory Inventory { get; private set; }
     
+    internal int Level { get; private set; } = 1;
+    
     internal Character(string name, CharacterRace characterRace, CharacterClass characterClass)
     {
         this.Name = name;
@@ -127,6 +129,27 @@ internal sealed class Character
     internal void DropItem(int index)
     {
         this.Inventory.RemoveItemAt(index);
+    }
+
+    private int GetHitDieAverage()
+    {
+        return this.CharacterClass switch
+        {
+            CharacterClass.Barbarian => 7,
+            CharacterClass.Fighter or CharacterClass.Paladin or CharacterClass.Ranger => 6,
+            CharacterClass.Bard or CharacterClass.Cleric or CharacterClass.Druid or
+            CharacterClass.Monk or CharacterClass.Rogue or CharacterClass.Warlock or 
+            CharacterClass.Artificer => 5,
+            CharacterClass.Wizard or CharacterClass.Sorcerer => 4,
+            _ => 5
+        };
+    }
+    internal void LevelUp()
+    {
+        this.Level++;
+        int average = this.GetHitDieAverage() + this.CalculateModifier(this.Constitution);
+        MaxHealth += average;
+        CurrentHealth += average;
     }
 
 }
