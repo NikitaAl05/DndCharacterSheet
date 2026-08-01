@@ -50,11 +50,9 @@ internal sealed class Character
     public int Intelligence { get; private set; }
     public int Wisdom { get; private set; }
     public int Charisma { get; private set; }
-
-    internal Character()
-    {
-    }
-
+    
+    internal Inventory Inventory { get; private set; }
+    
     internal Character(string name, CharacterRace characterRace, CharacterClass characterClass)
     {
         this.Name = name;
@@ -78,6 +76,8 @@ internal sealed class Character
 
         this.MaxHealth = GetBaseHealth() + this.CalculateModifier(this.Constitution);
         this.CurrentHealth = this.MaxHealth;
+        
+        this.Inventory = new Inventory(this.Strength * 7.5);
     }
 
     internal void TakeDamage(int damage)
@@ -117,6 +117,16 @@ internal sealed class Character
         int modifier = this.CalculateModifier(statValue);
         
         return roller.Roll(diceType, modifier);
+    }
+
+    internal void PickUpItem(Item item)
+    {
+        this.Inventory.AddItem(item);
+    }
+    
+    internal void DropItem(int index)
+    {
+        this.Inventory.RemoveItemAt(index);
     }
 
 }

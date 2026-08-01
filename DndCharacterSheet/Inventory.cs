@@ -37,4 +37,12 @@ internal class Inventory
     {
         return this.items.Sum(i => this.GetItemWeight(i));
     }
+
+    internal void RemoveItemAt(int index)
+    {
+        if (index >= 0 && index < this.items.Count)
+        {
+            this.items.RemoveAt(index);
+        }
+    }
 }
