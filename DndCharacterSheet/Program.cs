@@ -36,5 +36,6 @@ class Program
         Console.WriteLine("\nПерсонаж лечится на 113 хп");
         hero.Heal(113);
         Console.WriteLine($"Текущее здоровье: {hero.CurrentHealth}/{hero.MaxHealth}");
+
     }
 }

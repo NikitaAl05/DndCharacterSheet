@@ -1,6 +1,6 @@
 namespace DndCharacterSheet;
 
-enum CharacterRace
+internal enum CharacterRace
 {
     Human,
     Elf,
@@ -17,7 +17,7 @@ enum CharacterRace
     Tabaxi
 }
 
-enum CharacterClass
+internal enum CharacterClass
 {
     Rogue,
     Ranger,

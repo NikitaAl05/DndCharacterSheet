@@ -2,7 +2,7 @@ namespace DndCharacterSheet;
 
 internal static class EnumExtensions
 {
-    public static string ToRussian(this CharacterRace race)
+    internal static string ToRussian(this CharacterRace race)
     {
         return race switch
         {
@@ -23,7 +23,7 @@ internal static class EnumExtensions
         };
     }
     
-    public static string ToRussian(this CharacterClass characterClass)
+    internal static string ToRussian(this CharacterClass characterClass)
     {
         return characterClass switch
         {
@@ -41,6 +41,53 @@ internal static class EnumExtensions
             CharacterClass.Sorcerer => "Чародей",
             CharacterClass.Warlock => "Колдун",
             _ => "Неизвестный класс"
+        };
+    }
+    
+    internal static string ToRussian(this PotionEffectType potionEffectType)
+    {
+        return potionEffectType switch
+        {
+            PotionEffectType.Heal => "Исцеление",
+            _ => "Эффект"
+        };
+    }
+
+    internal static string ToRussian(this DamageType damageType)
+    {
+        return damageType switch
+        {
+            DamageType.Slashing => "Рубящий",
+            DamageType.Piercing => "Колющий",
+            DamageType.Bludgeoning => "Дробящий",
+            DamageType.Fire => "Огонь",
+            DamageType.Cold => "Холод",
+            DamageType.Lightning => "Электрический",
+            DamageType.Poison => "Яд",
+            _ => "Урон"
+        };
+    }
+    
+    internal static string ToRussian(this ArmorType armorType)
+    {
+        return armorType switch
+        {
+            ArmorType.Light => "Лёгкий доспех",
+            ArmorType.Medium => "Средний доспех",
+            ArmorType.Heavy => "Тяжёлый доспех",
+            ArmorType.Shield => "Щит",
+            _ => "Неизвестный тип доспеха"
+        };
+    }
+
+    internal static string ToRussian(this CoinType coinType)
+    {
+        return coinType switch
+        {
+            CoinType.Copper => "Медная монета",
+            CoinType.Silver => "Серебряная монета",
+            CoinType.Gold => "Золотая монета",
+            _ => "Неизвестная монета"
         };
     }
 }
