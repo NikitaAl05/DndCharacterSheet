@@ -1,5 +1,6 @@
 namespace DndCharacterSheet;
 
+using System.Text.Json.Serialization;
 internal enum CharacterRace
 {
     Human,
@@ -41,14 +42,28 @@ internal sealed class Character
     public CharacterRace CharacterRace { get; private set; }
     public CharacterClass CharacterClass { get; private set; }
 
+    [JsonInclude] 
     public int CurrentHealth { get; private set; }
+    
+    [JsonInclude] 
     public int MaxHealth { get; private set; }
-
+    
+    [JsonInclude] 
     public int Strength { get; private set; }
+    
+    [JsonInclude] 
     public int Dexterity { get; private set; }
+    
+    [JsonInclude] 
     public int Constitution { get; private set; }
+    
+    [JsonInclude] 
     public int Intelligence { get; private set; }
+    
+    [JsonInclude] 
     public int Wisdom { get; private set; }
+    
+    [JsonInclude] 
     public int Charisma { get; private set; }
     
     internal Inventory Inventory { get; private set; }
@@ -61,6 +76,7 @@ internal sealed class Character
         this.CharacterRace = characterRace;
         this.CharacterClass = characterClass;
     }
+    public Character() { }
 
     internal int CalculateModifier(int statValue)
     {
