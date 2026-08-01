@@ -1,0 +1,21 @@
+# .NET Build Outputs
+bin/
+obj/
+packages/
+
+# JetBrains Rider & ReSharper
+.idea/
+*.sln.docstates
+riderModule.iml
+_ReSharper.Caches/
+
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# User-specific Visual Studio / Rider files
+*.user
+*.userosscache
+*.suo
