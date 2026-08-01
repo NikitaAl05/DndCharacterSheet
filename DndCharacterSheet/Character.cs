@@ -29,4 +29,35 @@ internal sealed class Character
     {
         return (int)Math.Floor((statValue - 10) / 2.0);
     }
+
+    internal void SetStats(int strength, int dexterity, int constitution, int intelligence, int wisdom, int charisma)
+    {
+        this.Strength = strength;
+        this.Dexterity = dexterity;
+        this.Constitution = constitution;
+        this.Intelligence = intelligence;
+        this.Wisdom = wisdom;
+        this.Charisma = charisma;
+
+        this.MaxHealth = 10 + this.CalculateModifier(this.Constitution);
+        this.CurrentHealth = this.MaxHealth;
+    }
+
+    internal void TakeDamage(int damage)
+    {
+        this.CurrentHealth -= damage;
+        if (this.CurrentHealth <= 0)
+        {
+            this.CurrentHealth = 0;
+        }
+    }
+
+    internal void Heal(int amount)
+    {
+        this.CurrentHealth += amount;
+        if (this.CurrentHealth > this.MaxHealth)
+        {
+            this.CurrentHealth = this.MaxHealth;
+        }
+    }
 }
