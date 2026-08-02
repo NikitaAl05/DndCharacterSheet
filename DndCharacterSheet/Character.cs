@@ -118,7 +118,7 @@ internal sealed class Character
     {
     }
 
-    internal int CalculateModifier(int statValue)
+    internal static int CalculateModifier(int statValue)
     {
         return (int)Math.Floor((statValue - 10) / 2.0);
     }
@@ -132,7 +132,7 @@ internal sealed class Character
         this.Wisdom = wisdom;
         this.Charisma = charisma;
 
-        this.MaxHealth = GetBaseHealth() + this.CalculateModifier(this.Constitution);
+        this.MaxHealth = GetBaseHealth() + CalculateModifier(this.Constitution);
         this.CurrentHealth = this.MaxHealth;
 
         this.Inventory = new Inventory(this.Strength * 7.5);
@@ -172,7 +172,7 @@ internal sealed class Character
 
     internal int RollAbilityCheck(DiceType diceType, DiceRoller roller, int statValue)
     {
-        int modifier = this.CalculateModifier(statValue);
+        int modifier = CalculateModifier(statValue);
 
         return roller.Roll(diceType, modifier);
     }
@@ -204,7 +204,7 @@ internal sealed class Character
     internal void LevelUp()
     {
         this.Level++;
-        int average = this.GetHitDieAverage() + this.CalculateModifier(this.Constitution);
+        int average = this.GetHitDieAverage() + CalculateModifier(this.Constitution);
         MaxHealth += average;
         CurrentHealth += average;
     }

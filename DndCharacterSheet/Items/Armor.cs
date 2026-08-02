@@ -12,10 +12,13 @@ internal class Armor : Item
 {
     public ArmorType ArmorType {  get; init; }
     public int ArmorClassBonus { get; init; }
+    public bool IsEquipped { get; set; }
 
     internal Armor(string name, double weight, ArmorType armor ,int armorClassBonus) : base(name, weight)
     {
         this.ArmorType = armor;
         this.ArmorClassBonus = armorClassBonus;
+        this.IsEquipped = false;
     }
+    
 }

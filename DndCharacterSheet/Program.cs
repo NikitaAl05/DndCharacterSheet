@@ -4,11 +4,17 @@ class Program
 {
     static void Main(string[] args)
     {
-        Character hero = new Character("Никита", CharacterRace.Human, CharacterClass.Fighter);
-
-        hero.SetStats(20,10,16,5,5,8);
-        
-        ConsoleUi.DisplaySheet(hero);
-        
+        var build = new CharacterCreationBuild();
+        var character = build.Run();
+        if (character != null)
+        {
+            var session = new CharacterSession(character);
+            session.Run();
+        }
+        else
+        {
+            Console.WriteLine("\nСоздание персонажа отменено.");
+        }
     }
+    
 }
