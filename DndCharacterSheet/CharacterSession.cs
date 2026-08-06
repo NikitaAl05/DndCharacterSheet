@@ -32,7 +32,7 @@ internal sealed class CharacterSession
                     ShowInventoryMenu();
                     break;
                 case "3":
-                    ShowStub("Получить урон / Лечение");
+                    HandleDamageAndHealing(character);
                     break;
                 case "4":
                     ShowStub("Поднять уровень");
@@ -63,7 +63,7 @@ internal sealed class CharacterSession
         Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
         
         string hpBar = GenerateHpBar(character.CurrentHealth, character.MaxHealth);
-        string hpLine = $" HP: [{hpBar}] {character.CurrentHealth}/{character.MaxHealth}    КД: {character.ArmorClass}    Бонус: +{character.ProficiencyBonus}";
+        string hpLine = $" HP: [{hpBar}] {character.CurrentHealth}/{character.MaxHealth}    КД: {character.ArmorClass}    БМ: +{character.ProficiencyBonus}    Золото: {character.Gold}";
         Console.WriteLine($"║{hpLine.PadRight(68)}║");
         
         Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
@@ -79,10 +79,12 @@ internal sealed class CharacterSession
         string menu1 = " [1] Бросить кубик             [3] Получить урон / Лечение";
         string menu2 = " [2] Открыть инвентарь         [4] Поднять уровень";
         string menu3 = " [5] Сохранить в JSON          [0] Выход";
+        string menu4 = " [6] Кошелек";
         
         Console.WriteLine($"║{menu1.PadRight(68)}║");
         Console.WriteLine($"║{menu2.PadRight(68)}║");
         Console.WriteLine($"║{menu3.PadRight(68)}║");
+        Console.WriteLine($"║{menu4.PadRight(68)}║");
         
         Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
     }
@@ -139,6 +141,85 @@ internal sealed class CharacterSession
 
         int mod = Character.CalculateModifier(stat);
         return (stat, name, mod);
+    }
+    
+    // Управляет экрано лечения или полученя урона
+    private void HandleDamageAndHealing(Character character) 
+    {
+        string errorMessage = "";
+
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("╔════════════════════════════════════════════════════════════════════╗");
+            Console.WriteLine("║ УРОН И ЛЕЧЕНИЕ                                                     ║");
+            Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+            
+            string infoLine1 = $" Имя: {character.Name} │ Класс: {character.CharacterClass.ToRussian()}";
+            Console.WriteLine($"║{infoLine1.PadRight(68)}║");
+            
+            string hpBar = GenerateHpBar(character.CurrentHealth, character.MaxHealth);
+            string infoLine2 = $" HP: [{hpBar}] {character.CurrentHealth} / {character.MaxHealth}";
+            Console.WriteLine($"║{infoLine2.PadRight(68)}║");
+            
+            Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+            Console.WriteLine("║ Выберите действие:                                                 ║");
+            Console.WriteLine("║   [1] Получить урон        (уменьшить текущее HP)                  ║");
+            Console.WriteLine("║   [2] Получить лечение     (восстановить HP)                       ║");
+            Console.WriteLine("║   [0] Назад в меню                                                 ║");
+            Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+            string menuLine = " [1-2] Выбрать действие               [0] Назад в главное меню      ";
+            Console.WriteLine($"║{menuLine.PadRight(68)}║");
+            Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
+
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                Console.WriteLine($"Ошибка: {errorMessage}");
+                errorMessage = "";
+            }
+
+            Console.Write("Выберите действие > ");
+            var input = Console.ReadLine()?.Trim();
+
+            if (input == "0")
+            {
+                break;
+            }
+
+            if (input == "1" || input == "2")
+            {
+                bool isDamage = input == "1";
+                string actionName = isDamage ? "урона" : "лечения";
+
+                Console.Write($"Введите количество {actionName} > ");
+                var valueInput = Console.ReadLine();
+
+                if (int.TryParse(valueInput, out var amount) && amount >= 0)
+                {
+                    if (isDamage)
+                    {
+                        character.TakeDamage(amount);
+                        Console.WriteLine($"Получено урона: {amount}. Текущее HP: {character.CurrentHealth}/{character.MaxHealth}");
+                    }
+                    else
+                    {
+                        character.Heal(amount);
+                        Console.WriteLine($"Восстановлено HP: {amount}. Текущее HP: {character.CurrentHealth}/{character.MaxHealth}");
+                    }
+
+                    Console.WriteLine("Нажмите любую клавишу для продолжения...");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    errorMessage = "Введите корректное положительное число!";
+                }
+            }
+            else
+            {
+                errorMessage = "Неверный выбор! Введите 1, 2 или 0.";
+            } 
+        }
     }
 
     // Открывает интерактивное меню бросков кубиков
@@ -395,7 +476,9 @@ internal sealed class CharacterSession
                     string qtyStr = item is IHasQuantity q ? $"{q.Quantity} шт" : "1 шт";
                     string desc = GetItemDescription(item);
                     
-                    string line = $" [{i}] {item.Name,-17} │ {qtyStr,4} │ {item.Weight,4:F1} кг │ {desc}";
+                    double totalItemWeight = item is IHasQuantity stackable ? item.Weight * stackable.Quantity : item.Weight;
+                    
+                    string line = $" [{i}] {item.Name,-15} │ {qtyStr,6} │ {totalItemWeight,4:F1} кг │ {desc}";
                     
                     Console.WriteLine($"║{line.PadRight(68)}║");
                 }
@@ -610,9 +693,7 @@ internal sealed class CharacterSession
                     newItem = CreateArmorBuild();
                     break;
                 case "3":
-                    Console.Write("Введите вес зелья (кг) > ");
-                    double potionWeight = double.TryParse(Console.ReadLine(), out var pw) ? pw : 0.5;
-                    newItem = new Potion(PotionEffectType.Heal, potionWeight, 1);
+                    newItem = CreatePotionInteractive();
                     break;
                 case "4":
                     Console.Write("Введите название снаряжения > ");
@@ -630,7 +711,7 @@ internal sealed class CharacterSession
         }
     }
 
-    // Пошаговый интерактивный мастер создания кастомного доспеха
+    // Пошаговый интерактивный мастер создания доспеха ---
     private Armor CreateArmorBuild()
     {
         string name = "Броня";
@@ -768,7 +849,7 @@ internal sealed class CharacterSession
         return new Armor(name, weight, armorType, acBonus);
     }
 
-    // Пошаговый интерактивный мастер создания кастомного оружия
+    // Пошаговый интерактивный мастер создания оружия ---
     private Weapon CreateWeaponBuild()
     {
         string name = "Оружие";
@@ -856,14 +937,206 @@ internal sealed class CharacterSession
 
         return new Weapon(name, weight, diceType, damageBonus, damageType);
     }
+    
+    // Пошаговый интерактивный мастер создания зелья ---
+    internal Potion? CreatePotionInteractive()
+    {
+        PotionEffectType selectedEffect = PotionEffectType.Heal;
+        double weightPerItem = 1.0;
+        int quantity = 1;
+        int currentStep = 1;
+        string errorMessage = "";
 
+        while (currentStep >= 1 && currentStep <= 3)
+        {
+            switch (currentStep)
+            {
+                case 1:
+                {
+                    Console.Clear();
+                    Console.WriteLine("╔════════════════════════════════════════════════════════════════════╗");
+                    Console.WriteLine("║ СОЗДАНИЕ ЗЕЛЬЯ                             [ Шаг 1 из 3: Тип ]     ║");
+                    Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                    Console.WriteLine("║ Выберите тип зелья:                                                ║");
+                    
+                    var values = Enum.GetValues<PotionEffectType>();
+                    
+                    int half = (values.Length + 1) / 2;
+                    for (int i = 0; i < half; i++)
+                    {
+                        var leftType = values[i];
+                        string leftStr = $"   [{i + 1,2}] {leftType.ToRussian()}";
+                        
+                        string rightStr = "";
+                        int rightIndex = i + half;
+                        if (rightIndex < values.Length)
+                        {
+                            var rightType = values[rightIndex];
+                            rightStr = $"   [{rightIndex + 1,2}] {rightType.ToRussian()}";
+                        }
+
+                        string rowLine = leftStr.PadRight(34) + rightStr;
+                        Console.WriteLine($"║{rowLine.PadRight(68)}║");
+                    }
+
+                    Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                    string menuLine = $" [1-{values.Length}] Выбрать зелье                  [0] Отмена";
+                    Console.WriteLine($"║{menuLine.PadRight(68)}║");
+                    Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
+
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        Console.WriteLine($"Ошибка: {errorMessage}");
+                        errorMessage = "";
+                    }
+
+                    Console.Write("Введите номер зелья > ");
+                    var input = Console.ReadLine()?.Trim();
+
+                    if (input == "0")
+                    {
+                        return null;
+                    }
+
+                    if (int.TryParse(input, out var choice) && choice >= 1 && choice <= values.Length)
+                    {
+                        selectedEffect = values[choice - 1];
+                        currentStep = 2;
+                    }
+                    else
+                    {
+                        errorMessage = $"Введите число от 1 до {values.Length}.";
+                    }
+                    break;
+                }
+                case 2:
+                {
+                    Console.Clear();
+                    Console.WriteLine("╔════════════════════════════════════════════════════════════════════╗");
+                    Console.WriteLine("║ СОЗДАНИЕ ЗЕЛЬЯ                             [ Шаг 2 из 3: Вес ]     ║");
+                    Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                    string infoLine = $" Выбранное зелье: {selectedEffect.ToRussian()}";
+                    Console.WriteLine($"║{infoLine.PadRight(68)}║");
+                    Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                    Console.WriteLine("║ Введите вес ОДНОГО зелья в кг (например, 2,0 за баночку):          ║");
+                    Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                    string menuLine = " [0] Назад к выбору типа";
+                    Console.WriteLine($"║{menuLine.PadRight(68)}║");
+                    Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
+
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        Console.WriteLine($"Ошибка: {errorMessage}");
+                        errorMessage = "";
+                    }
+
+                    Console.Write("Введите вес одной штуки > ");
+                    var input = Console.ReadLine()?.Trim();
+
+                    if (input == "0")
+                    {
+                        currentStep = 1;
+                        break;
+                    }
+
+                    if (double.TryParse(input, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsedWeight) && parsedWeight >= 0)
+                    {
+                        weightPerItem = parsedWeight;
+                        currentStep = 3;
+                    }
+                    else if (double.TryParse(input, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.GetCultureInfo("ru-RU"), out parsedWeight) && parsedWeight >= 0)
+                    {
+                        weightPerItem = parsedWeight;
+                        currentStep = 3;
+                    }
+                    else
+                    {
+                        errorMessage = "Введите корректное число (например, 2.0 или 0.5).";
+                    }
+                    break;
+                }
+                case 3:
+                {
+                    Console.Clear();
+                    Console.WriteLine("╔════════════════════════════════════════════════════════════════════╗");
+                    Console.WriteLine("║ СОЗДАНИЕ ЗЕЛЬЯ                         [ Шаг 3 из 3: Количество ]  ║");
+                    Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                    string infoLine = $" Зелье: {selectedEffect.ToRussian()} │ Вес 1 шт: {weightPerItem} кг";
+                    Console.WriteLine($"║{infoLine.PadRight(68)}║");
+                    Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                    Console.WriteLine("║ Введите количество штук:                                           ║");
+                    Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                    string menuLine = " [0] Назад к весу";
+                    Console.WriteLine($"║{menuLine.PadRight(68)}║");
+                    Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
+
+                    if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        Console.WriteLine($"Ошибка: {errorMessage}");
+                        errorMessage = "";
+                    }
+
+                    Console.Write("Введите количество > ");
+                    var input = Console.ReadLine()?.Trim();
+
+                    if (input == "0")
+                    {
+                        currentStep = 2;
+                        break;
+                    }
+
+                    if (int.TryParse(input, out int parsedQty) && parsedQty >= 1 && parsedQty <= 9)
+                    {
+                        quantity = parsedQty;
+                        currentStep = 4;
+                    }
+                    else
+                    {
+                        errorMessage = "Введите число от 1 до 9.";
+                    }
+                    break;
+                }
+            }
+        }
+        
+        return new Potion(selectedEffect, weightPerItem, quantity);
+    }
+    
     // Открывает интерфейс для удаления предметов из рюкзака
     private void ShowDeleteItemMenu()
     {
+        if (character.Inventory.Count == 0)
+        {
+            Console.WriteLine("\nРюкзак пуст, нечего удалять!");
+            Console.ReadKey();
+            return;
+        }
+
         Console.Write("\nВведите индекс предмета для удаления [0, 1, 2...]: ");
         if (int.TryParse(Console.ReadLine(), out int index))
         {
-            character.Inventory.RemoveItemAt(index);
+            if (index >= 0 && index < character.Inventory.Count)
+            {
+                var item = character.Inventory[index];
+
+                if (item is IHasQuantity stackable && stackable.Quantity > 1)
+                {
+                    Console.Write($"У вас в инвентаре {stackable.Quantity} шт. Сколько штук удалить? > ");
+                    if (int.TryParse(Console.ReadLine(), out int qtyToRemove) && qtyToRemove > 0)
+                    {
+                        character.Inventory.DecreaseItemQuantity(index, qtyToRemove);
+                    }
+                }
+                else
+                {
+                    character.Inventory.RemoveItemAt(index);
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nОшибка: Предмета с таким индексом не существует.");
+                Console.ReadKey();
+            }
         }
     }
     
@@ -876,7 +1149,6 @@ internal sealed class CharacterSession
             Armor a => $"Броня (КД +{a.ArmorClassBonus})",
             Potion => "Зелье",
             Equipment => "Снаряжение",
-            Coin c => $"Монеты ({c.CoinType.ToRussian()})",
             _ => "Предмет"
         };
     }

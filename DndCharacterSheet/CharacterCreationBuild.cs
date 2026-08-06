@@ -66,6 +66,16 @@ internal sealed class CharacterCreationBuild
         character.BodyArmor = this.BodyArmor;
         character.Shield = this.Shield;
 
+        if (this.BodyArmor != null)
+        {
+            character.Inventory.AddItem(this.BodyArmor); 
+        }
+
+        if (this.Shield != null)
+        {
+            character.Inventory.AddItem(this.Shield);
+        }
+        
         return character;
     }
 

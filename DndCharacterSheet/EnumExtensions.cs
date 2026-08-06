@@ -48,7 +48,22 @@ internal static class EnumExtensions
     {
         return potionEffectType switch
         {
-            PotionEffectType.Heal => "Исцеление",
+            PotionEffectType.Heal => "Лечение",
+            PotionEffectType.GreaterHeal => "Великое лечение",
+            PotionEffectType.SuperiorHeal => "Превосходное",
+            PotionEffectType.SupremeHeal => "Высшее лечение",
+            PotionEffectType.Invisibility => "Невидимость",
+            PotionEffectType.Speed => "Скорость",
+            PotionEffectType.Flying => "Полёт",
+            PotionEffectType.Resistance => "Сопротивление",
+            PotionEffectType.GiantStrength => "Сила великана",
+            PotionEffectType.MindReading => "Чтение мыслей",
+            PotionEffectType.WaterBreathing => "Водное дыхание",
+            PotionEffectType.HealthElixir => "Эликсир здоровья",
+            PotionEffectType.Clairvoyance => "Ясновидение",
+            PotionEffectType.Growth => "Рост",
+            PotionEffectType.Diminution => "Уменьшение",
+            PotionEffectType.Poison => "Яд",
             _ => "Эффект"
         };
     }
@@ -83,17 +98,6 @@ internal static class EnumExtensions
             ArmorType.Heavy => "Тяжёлый доспех",
             ArmorType.Shield => "Щит",
             _ => "Неизвестный тип доспеха"
-        };
-    }
-
-    internal static string ToRussian(this CoinType coinType)
-    {
-        return coinType switch
-        {
-            CoinType.Copper => "Медная монета",
-            CoinType.Silver => "Серебряная монета",
-            CoinType.Gold => "Золотая монета",
-            _ => "Неизвестная монета"
         };
     }
 }

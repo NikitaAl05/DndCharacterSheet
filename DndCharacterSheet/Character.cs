@@ -41,6 +41,8 @@ internal sealed class Character
     public string Name { get; private set; }
     public CharacterRace CharacterRace { get; private set; }
     public CharacterClass CharacterClass { get; private set; }
+    
+    public int Gold { get; set; } = 0;
 
     [JsonInclude] public int CurrentHealth { get; private set; }
 

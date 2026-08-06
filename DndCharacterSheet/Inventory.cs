@@ -6,7 +6,7 @@ internal class Inventory
     
     internal event Action<Item> OnItemAddFailed;
     internal double MaxWeight { get; init; }
-
+    
     internal Item this[int index]
     {
         get => this.items[index];
@@ -14,6 +14,31 @@ internal class Inventory
     internal Inventory(double maxWeight)
     {
         this.MaxWeight = maxWeight;
+    }
+    
+    internal int Count => this.items.Count;
+    
+    internal void DecreaseItemQuantity(int index, int amountToRemove)
+    {
+        if (index >= 0 && index < this.items.Count)
+        {
+            var item = this.items[index];
+            if (item is IHasQuantity itemWithQty)
+            {
+                if (amountToRemove >= itemWithQty.Quantity)
+                {
+                    this.RemoveItemAt(index);
+                }
+                else
+                {
+                    itemWithQty.Quantity -= amountToRemove;
+                }
+            }
+            else
+            {
+                this.RemoveItemAt(index);
+            }
+        }
     }
     
     private double GetItemWeight(Item item)

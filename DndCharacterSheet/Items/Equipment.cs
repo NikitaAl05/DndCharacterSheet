@@ -2,7 +2,7 @@ namespace DndCharacterSheet;
 
 internal sealed class Equipment : Item, IHasQuantity
 {
-    public int Quantity { get; init; }
+    public int Quantity { get; set; }
 
     public Equipment(string name, double weight) : base(name, weight)
     {
