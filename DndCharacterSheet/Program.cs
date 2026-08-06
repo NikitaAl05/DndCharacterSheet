@@ -4,8 +4,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        var build = new CharacterCreationBuild();
-        var character = build.Run();
+        
+        var mainMenu = new MainMenu();
+        Character? character = mainMenu.Run();
+
         if (character != null)
         {
             var session = new CharacterSession(character);
@@ -13,7 +15,7 @@ class Program
         }
         else
         {
-            Console.WriteLine("\nСоздание персонажа отменено.");
+            Console.WriteLine("\nСоздание или загрузка персонажа отменена.");
         }
     }
     

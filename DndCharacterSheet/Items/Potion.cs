@@ -1,5 +1,8 @@
 namespace DndCharacterSheet;
 
+using System.Text.Json.Serialization;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 internal enum PotionEffectType
 {
     Heal,           
@@ -24,6 +27,11 @@ internal class Potion : Item, IHasQuantity
 {
     public PotionEffectType EffectType { get; init; }
     public int Quantity { get; set; }
+    
+    [JsonConstructor]
+    internal Potion() : base()
+    {
+    }
 
     public Potion(PotionEffectType effectType, double weight, int quantity) 
         : base(effectType.ToRussian(), weight)

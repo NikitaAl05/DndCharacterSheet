@@ -1,5 +1,7 @@
 namespace DndCharacterSheet;
+using System.Text.Json.Serialization;
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 internal enum ArmorType
 {
     Light,
@@ -7,12 +9,16 @@ internal enum ArmorType
     Heavy,
     Shield
 }
-
 internal class Armor : Item
 {
     public ArmorType ArmorType {  get; init; }
     public int ArmorClassBonus { get; init; }
     public bool IsEquipped { get; set; }
+    
+    [JsonConstructor]
+    internal Armor() : base()
+    {
+    }
 
     internal Armor(string name, double weight, ArmorType armor ,int armorClassBonus) : base(name, weight)
     {

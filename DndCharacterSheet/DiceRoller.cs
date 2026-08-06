@@ -1,5 +1,8 @@
 namespace DndCharacterSheet;
+using System.Text.Json.Serialization;
 
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 internal enum DiceType
 {
     D4 = 4,

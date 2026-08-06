@@ -208,7 +208,6 @@ namespace DndCharacterSheet.ConsoleUI
             Console.WriteLine("║ [2] Доспех                                                         ║");
             Console.WriteLine("║ [3] Зелье                                                          ║");
             Console.WriteLine("║ [4] Снаряжение                                                     ║");
-            Console.WriteLine("║ [5] Своё (кастомный предмет)                                       ║");
             Console.WriteLine("║ [0] Отмена                                                         ║");
             Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
             Console.Write(" Выберите категорию > ");
@@ -216,48 +215,14 @@ namespace DndCharacterSheet.ConsoleUI
             var choice = Console.ReadLine()?.Trim();
             if (choice == "0" || string.IsNullOrEmpty(choice)) return;
 
-            Item? newItem = null;
-
-            if (choice == "5")
+            Item? newItem = choice switch
             {
-                Console.Clear();
-                Console.WriteLine(" Выберите базовую категорию для своего предмета:");
-                Console.WriteLine(" [1] Оружие  [2] Доспех  [3] Зелье  [4] Снаряжение");
-                Console.Write(" > ");
-                var subChoice = Console.ReadLine()?.Trim();
-
-                if (subChoice == "1")
-                {
-                    newItem = CreateWeaponBuild();
-                }
-                else
-                {
-                    Console.Write("Введите название предмета > ");
-                    string customName = Console.ReadLine()?.Trim() ?? "Предмет";
-
-                    Console.Write("Введите вес предмета (кг) > ");
-                    if (double.TryParse(Console.ReadLine(), out double customWeight))
-                    {
-                        newItem = subChoice switch
-                        {
-                            "2" => new Armor(customName, customWeight, ArmorType.Light, 11),
-                            "3" => new Potion(PotionEffectType.Heal, customWeight, 1),
-                            _ => new Equipment(customName, customWeight, 1)
-                        };
-                    }
-                }
-            }
-            else
-            {
-                newItem = choice switch
-                {
-                    "1" => CreateWeaponBuild(),
-                    "2" => CreateArmorBuild(),
-                    "3" => CreatePotionInteractive(),
-                    "4" => CreateEquipmentBuild(),
-                    _ => null
-                };
-            }
+                "1" => CreateWeaponBuild(),
+                "2" => CreateArmorBuild(),
+                "3" => CreatePotionInteractive(),
+                "4" => CreateEquipmentBuild(),
+                _ => null
+            };
 
             if (newItem != null)
             {
@@ -267,11 +232,124 @@ namespace DndCharacterSheet.ConsoleUI
 
         private Equipment CreateEquipmentBuild()
         {
-            Console.Write("Введите название снаряжения > ");
-            string eqName = Console.ReadLine()?.Trim() ?? "Снаряжение";
-            Console.Write("Введите вес (кг) > ");
-            double eqWeight = double.TryParse(Console.ReadLine(), out var ew) ? ew : 1.0;
-            return new Equipment(eqName, eqWeight, 1);
+            string name = "Снаряжение";
+            string errorMessage = "";
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("╔════════════════════════════════════════════════════════════════════╗");
+                Console.WriteLine("║ СОЗДАНИЕ СНАРЯЖЕНИЯ                      [ Шаг 1 из 3: Название ]  ║");
+                Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                Console.WriteLine("║ Введите название снаряжения:                                       ║");
+                Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                Console.WriteLine("║ [Enter] Оставить по умолчанию (\"Снаряжение\")                       ║");
+                Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
+
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    Console.WriteLine($"Ошибка: {errorMessage}");
+                    errorMessage = "";
+                }
+
+                Console.Write(" Название > ");
+                string inputName = Console.ReadLine()?.Trim() ?? "";
+
+                if (string.IsNullOrEmpty(inputName))
+                {
+                    name = "Снаряжение";
+                    break;
+                }
+                else if (inputName.Length > 17)
+                {
+                    errorMessage = "Название слишком длинное! Максимум 17 символов.";
+                    continue;
+                }
+                else
+                {
+                    name = inputName;
+                    break;
+                }
+            }
+
+            double weight = 1.0;
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("╔════════════════════════════════════════════════════════════════════╗");
+                Console.WriteLine("║ СОЗДАНИЕ СНАРЯЖЕНИЯ                      [ Шаг 2 из 3: Вес ]       ║");
+                Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                Console.WriteLine("║ Введите вес одной штуки (кг):                                      ║");
+                Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                Console.WriteLine("║ [Enter] Использовать вес по умолчанию (1.0 кг)                     ║");
+                Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
+
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    Console.WriteLine($"Ошибка: {errorMessage}");
+                    errorMessage = "";
+                }
+
+                Console.Write(" Вес (кг) > ");
+                string weightInput = Console.ReadLine()?.Trim() ?? "";
+
+                if (string.IsNullOrEmpty(weightInput))
+                {
+                    weight = 1.0;
+                    break;
+                }
+
+                if ((double.TryParse(weightInput, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsedWeight) && parsedWeight >= 0) ||
+                    (double.TryParse(weightInput, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.GetCultureInfo("ru-RU"), out parsedWeight) && parsedWeight >= 0))
+                {
+                    weight = parsedWeight;
+                    break;
+                }
+                else
+                {
+                    errorMessage = "Неверный формат веса! Введите положительное число.";
+                }
+            }
+            
+            int quantity = 1;
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("╔════════════════════════════════════════════════════════════════════╗");
+                Console.WriteLine("║ СОЗДАНИЕ СНАРЯЖЕНИЯ                  [ Шаг 3 из 3: Количество ]    ║");
+                Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                Console.WriteLine("║ Введите количество штук:                                           ║");
+                Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
+                Console.WriteLine("║ [Enter] Использовать количество по умолчанию (1 шт)                ║");
+                Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
+
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    Console.WriteLine($"Ошибка: {errorMessage}");
+                    errorMessage = "";
+                }
+
+                Console.Write(" Количество > ");
+                string qtyInput = Console.ReadLine()?.Trim() ?? "";
+
+                if (string.IsNullOrEmpty(qtyInput))
+                {
+                    quantity = 1;
+                    break;
+                }
+
+                if (int.TryParse(qtyInput, out int parsedQty) && parsedQty >= 1 && parsedQty <= 99)
+                {
+                    quantity = parsedQty;
+                    break;
+                }
+                else
+                {
+                    errorMessage = "Введите целое число от 1 до 99.";
+                }
+            }
+
+            return new Equipment(name, weight, quantity);
         }
 
         private Armor CreateArmorBuild()
