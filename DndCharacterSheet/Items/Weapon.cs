@@ -1,5 +1,5 @@
 namespace DndCharacterSheet;
-
+using System.Text.Json.Serialization;
 internal enum DamageType
 {
     Acid,
@@ -19,10 +19,11 @@ internal enum DamageType
 
 internal sealed class Weapon : Item
 {
-    internal DiceType DamageDice { get; init; }
-    internal int DamageBonus { get; init; }
-    internal DamageType DamageType { get; init; }
+    public DiceType DamageDice { get; init; }
+    public int DamageBonus { get; init; }
+    public DamageType DamageType { get; init; }
 
+    [JsonConstructor]
     internal Weapon(string name, double weight, DiceType damageDice, int damageBonus, DamageType damageType) 
         : base(name, weight)
     {

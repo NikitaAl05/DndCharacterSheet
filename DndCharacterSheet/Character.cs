@@ -60,9 +60,9 @@ internal sealed class Character
 
     [JsonInclude] public int Charisma { get; private set; }
 
-    internal Inventory Inventory { get; private set; }
+    [JsonInclude] internal Inventory Inventory { get; private set; }
 
-    internal int Level { get; private set; } = 1;
+    [JsonInclude] internal int Level { get; private set; } = 1;
 
     internal Armor? BodyArmor { get; set; }
     internal Armor? Shield { get; set; }

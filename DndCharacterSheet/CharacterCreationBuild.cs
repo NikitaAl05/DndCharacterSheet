@@ -388,16 +388,16 @@ internal sealed class CharacterCreationBuild
 
             Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
             
-            string s1 = " [1] Легкая кожаная   (Вес: 4.5 кг, КД 11 + ЛОВ)";
+            string s1 = " [1] Лёгкий доспех  (Вес: 4.5 кг, КД 11 + ЛОВ)";
             Console.WriteLine($"║{s1.PadRight(68)}║");
 
-            string s2 = " [2] Средняя кольчуга (Вес: 10.0 кг, КД 14 + макс. 2 от ЛОВ)";
+            string s2 = " [2] Средний доспех (Вес: 10.0 кг, КД 14 + макс. 2 от ЛОВ)";
             Console.WriteLine($"║{s2.PadRight(68)}║");
 
-            string s3 = " [3] Тяжелые латы     (Вес: 29.5 кг, КД 18 фиксированно)";
+            string s3 = " [3] Тяжёлый доспех (Вес: 29.5 кг, КД 18 фиксированно)";
             Console.WriteLine($"║{s3.PadRight(68)}║");
 
-            string s4 = " [4] Без брони        (КД 10 + ЛОВ)";
+            string s4 = " [4] Без брони      (КД 10 + ЛОВ)";
             Console.WriteLine($"║{s4.PadRight(68)}║");
 
             Console.WriteLine("╠════════════════════════════════════════════════════════════════════╣");
@@ -431,13 +431,13 @@ internal sealed class CharacterCreationBuild
                 switch (choice)
                 {
                     case 1:
-                        this.BodyArmor = new Armor("Легкая кожаная броня", 4.5, ArmorType.Light, 11);
+                        this.BodyArmor = new Armor("Лёгкий доспех", 4.5, ArmorType.Light, 11);
                         break;
                     case 2:
-                        this.BodyArmor = new Armor("Средняя кольчуга", 10.0, ArmorType.Medium, 14);
+                        this.BodyArmor = new Armor("Средний доспех", 10.0, ArmorType.Medium, 14);
                         break;
                     case 3:
-                        this.BodyArmor = new Armor("Тяжелые латы", 29.5, ArmorType.Heavy, 18);
+                        this.BodyArmor = new Armor("Тяжёлый доспех", 29.5, ArmorType.Heavy, 18);
                         break;
                     case 4:
                         this.BodyArmor = null;

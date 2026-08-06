@@ -1,24 +1,31 @@
 namespace DndCharacterSheet;
 
+using System.Text.Json.Serialization;
 internal class Inventory
 {
-    private readonly List<Item> items = new();
+    [JsonInclude] public List<Item> items = new();
     
-    internal event Action<Item> OnItemAddFailed;
-    internal double MaxWeight { get; init; }
+    public event Action<Item> OnItemAddFailed;
+    [JsonInclude] public double MaxWeight { get; init; }
     
-    internal Item this[int index]
+    public Item this[int index]
     {
         get => this.items[index];
     }
-    internal Inventory(double maxWeight)
+    
+    [JsonConstructor]
+    internal Inventory()
+    {
+    }
+    
+    public Inventory(double maxWeight)
     {
         this.MaxWeight = maxWeight;
     }
     
-    internal int Count => this.items.Count;
+    public int Count => this.items.Count;
     
-    internal void DecreaseItemQuantity(int index, int amountToRemove)
+    public void DecreaseItemQuantity(int index, int amountToRemove)
     {
         if (index >= 0 && index < this.items.Count)
         {
@@ -46,7 +53,7 @@ internal class Inventory
         return item is IHasQuantity itemWithQty ? item.Weight * itemWithQty.Quantity : item.Weight;
     }
     
-    internal void AddItem(Item item)
+    public void AddItem(Item item)
     {
         if (this.GetTotalWeight() + this.GetItemWeight(item) <= this.MaxWeight)
         {
@@ -58,12 +65,12 @@ internal class Inventory
         }
     }
 
-    internal double GetTotalWeight()
+    public double GetTotalWeight()
     {
         return this.items.Sum(i => this.GetItemWeight(i));
     }
 
-    internal void RemoveItemAt(int index)
+    public void RemoveItemAt(int index)
     {
         if (index >= 0 && index < this.items.Count)
         {
