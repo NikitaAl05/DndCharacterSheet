@@ -765,6 +765,15 @@ namespace DndCharacterSheet.ConsoleUI
                     }
                     else
                     {
+                        if (item == character.BodyArmor)
+                        {
+                            character.BodyArmor = null;
+                        }
+                        if (item == character.Shield)
+                        {
+                            character.Shield = null;
+                        }
+                        
                         character.Inventory.RemoveItemAt(index);
                     }
                 }

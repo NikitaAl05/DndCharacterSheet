@@ -52,7 +52,7 @@ internal sealed class CharacterCreationBuild
 
         if (currentStep < 1)
         {
-            return null; 
+            return null;    
         }
         
         var character = new Character(this.name, this.characterRace, this.characterClass);

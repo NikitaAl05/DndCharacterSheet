@@ -178,17 +178,7 @@ internal sealed class Character
 
         return roller.Roll(diceType, modifier);
     }
-
-    internal void PickUpItem(Item item)
-    {
-        this.Inventory.AddItem(item);
-    }
-
-    internal void DropItem(int index)
-    {
-        this.Inventory.RemoveItemAt(index);
-    }
-
+    
     private int GetHitDieAverage()
     {
         return this.CharacterClass switch
